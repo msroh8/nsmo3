@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>التعلم الذاتي – معلوماتية 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+/* VOICE: a friendly school study companion, clear and encouraging
+   IDEA: the student's "mental sheet": numbered boxes, tabs like a binder
+   PICTURE: the video player + the six-box sheet up front
+   COLOUR and TYPE: white ground, teal lead, violet support, amber accent; IBM Plex Sans Arabic + JetBrains Mono
+   LAYOUT: one centred column up to 1100px, sticky tabs, cards stack on phones */
+:root{color-scheme:light dark;
+  --bg:light-dark(#ffffff,#0d1420);--ink:light-dark(#0f172a,#e8eef6);--mute:light-dark(#5b6b80,#9fb0c4);
+  --card:light-dark(#ffffff,#141e2d);--line:light-dark(#e3e8ef,#24324a);--soft:light-dark(#f4f8fb,#101a28);
+  --teal:light-dark(#0e7490,#38bdd8);--tealS:light-dark(#e3f5f9,#0f2e38);--vio:light-dark(#6d28d9,#a78bfa);--vioS:light-dark(#f1ebfd,#241a3d);
+  --amb:light-dark(#b45309,#fbbf24);--ambS:light-dark(#fdf3e1,#33260f);--ok:light-dark(#047857,#34d399);--okS:light-dark(#e2f7ef,#0f2e24);
+  --bad:light-dark(#be123c,#fb7185);--badS:light-dark(#fde8ec,#3a1520);--code:#0e1526}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 "IBM Plex Sans Arabic",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1100px;margin:0 auto;padding:0 max(4vw,16px)}
+a{color:var(--teal)}
+header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--tealS),var(--bg))}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{background:#fff;border-radius:14px;padding:8px 12px;border:1px solid #e3e8ef;display:flex}
+.logo img{height:48px;width:auto;display:block}
+.dept{font-weight:700;color:var(--teal);font-size:16px;line-height:1.3}
+.prog{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute)}
+.bar{width:140px;height:10px;border-radius:9px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--vio));transition:width .4s}
+.hero{padding:10px 0 26px}
+.hero h1{margin:0;font-size:clamp(32px,5vw,50px);line-height:1.1;text-wrap:balance}
+.hero p{margin:8px 0 0;color:var(--mute);font-size:19px}
+nav.tabs{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.tabrow{display:flex;gap:6px;overflow-x:auto;padding:10px max(4vw,16px);scrollbar-width:none;max-width:760px}
+.tab{flex:1 1 0;white-space:nowrap;min-height:46px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 16px "IBM Plex Sans Arabic",sans-serif;cursor:pointer}
+.tab[aria-selected=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+main{padding:28px 0 40px}
+section.view{display:none}section.view.on{display:block}
+h2{font-size:clamp(24px,3.4vw,32px);line-height:1.2;margin:0 0 6px}
+.lead{color:var(--mute);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:760px){.grid{grid-template-columns:minmax(0,1fr)}}
+.vid{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0b1220;display:grid;place-items:center}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.play{display:flex;flex-direction:column;align-items:center;gap:10px;color:#e8eef6;background:none;border:0;cursor:pointer;font:600 16px "IBM Plex Sans Arabic",sans-serif;padding:20px;width:100%;height:100%;justify-content:center}
+.play .c{width:72px;height:72px;border-radius:50%;background:var(--teal);display:grid;place-items:center;box-shadow:0 10px 30px rgba(14,116,144,.45)}
+.play .c::after{content:"";border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent;margin-left:6px}
+.soon{color:#9fb0c4;text-align:center;padding:20px;font-size:15px}
+.vmeta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
+.vmeta h3{margin:0;font-size:19px;line-height:1.35}
+.num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--tealS);color:var(--teal);font-weight:700;font-size:15px;margin-inline-end:8px}
+.seen{min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--soft);color:var(--mute);font:600 14px "IBM Plex Sans Arabic",sans-serif;cursor:pointer}
+.seen.on{background:var(--okS);color:var(--ok);border-color:var(--ok)}
+.ext{font-size:14px}
+.big .vid{border-radius:18px}
+.six{display:grid;gap:14px;grid-template-columns:repeat(3,minmax(0,1fr));margin:26px 0}
+@media(max-width:760px){.six{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.six{grid-template-columns:minmax(0,1fr)}}
+.box{border:2px dashed var(--line);border-radius:16px;padding:14px 16px;background:var(--card)}
+.box b{display:flex;align-items:center;gap:8px;font-size:18px}
+.box b span{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;font-size:15px;flex:none}
+.box p{margin:6px 0 0;color:var(--mute);font-size:15px;line-height:1.55}
+.box.key{border-color:var(--amb);background:var(--ambS)}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:start;vertical-align:top}
+th{color:var(--mute);font-size:14px;font-weight:600}
+.tech{font-weight:700;color:var(--vio)}
+.ltr{direction:ltr;unicode-bidi:isolate;font-family:"JetBrains Mono",monospace;font-size:.92em}
+.plist{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.plist a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:10px;background:var(--soft);border:1px solid var(--line);text-decoration:none;font-weight:600;font-size:15px;direction:ltr}
+.plist a.ch{border-color:var(--bad);color:var(--bad)}
+.tag{display:inline-block;font-size:13px;padding:2px 10px;border-radius:8px;background:var(--vioS);color:var(--vio);font-weight:600}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.seg button{flex:1 1 160px;min-height:52px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 17px "IBM Plex Sans Arabic",sans-serif;cursor:pointer}
+.seg button[aria-pressed=true]{border-color:var(--vio);background:var(--vioS);color:var(--vio)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:thin}
+.chips button{flex:none;min-height:42px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:600 15px "JetBrains Mono",monospace;cursor:pointer;direction:ltr}
+.chips button[aria-pressed=true]{background:var(--teal);color:#fff;border-color:var(--teal)}
+.chips button.done::after{content:" ✓"}
+.q{margin:16px 0}
+.q h4{margin:0 0 8px;font-size:17px}
+.opts{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.opt{min-height:48px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:500 16px "IBM Plex Sans Arabic",sans-serif;text-align:start;cursor:pointer}
+.opt.right{border-color:var(--ok);background:var(--okS);color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:var(--badS);color:var(--bad)}
+.fb{margin-top:8px;padding:10px 14px;border-radius:12px;font-size:15px;display:none}
+.fb.show{display:block}.fb.ok{background:var(--okS);color:var(--ok)}.fb.no{background:var(--badS);color:var(--bad)}
+.stmt{background:var(--soft);border-radius:14px;padding:14px 16px;margin-bottom:6px}
+.cons{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.cons span{padding:6px 12px;border-radius:10px;background:var(--tealS);color:var(--teal);font:700 15px "JetBrains Mono",monospace;direction:ltr}
+.io{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
+@media(max-width:520px){.io{grid-template-columns:minmax(0,1fr)}}
+pre.sample{margin:0;background:var(--code);color:#dbe6ff;border-radius:12px;padding:12px 16px;direction:ltr;text-align:left;font:15px/1.6 "JetBrains Mono",monospace;overflow-x:auto}
+.ans{display:flex;gap:8px;margin-top:8px}
+.ans input{flex:1;min-height:48px;border-radius:12px;border:2px solid var(--line);padding:0 14px;font:16px "JetBrains Mono",monospace;direction:ltr;background:var(--card);color:var(--ink)}
+.btn{min-height:48px;padding:0 20px;border-radius:12px;border:0;background:var(--teal);color:#fff;font:700 16px "IBM Plex Sans Arabic",sans-serif;cursor:pointer}
+.btn.alt{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+pre.code{margin:0;background:var(--code);color:#dbe6ff;border-radius:14px;padding:16px;direction:ltr;text-align:left;font:15px/1.9 "JetBrains Mono",monospace;overflow-x:auto;white-space:pre}
+pre.code select{font:700 14px "JetBrains Mono",monospace;border-radius:8px;border:2px solid #f59e0b;background:#2a2410;color:#fde68a;padding:2px 4px;min-height:30px}
+pre.code select.right{border-color:#34d399;background:#0f2e24;color:#a7f3d0}
+pre.code select.wrong{border-color:#fb7185;background:#3a1520;color:#fecdd3}
+.cm{color:#7f8bc4}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.stars{color:var(--amb);font-weight:700}
+footer{border-top:1px solid var(--line);background:var(--soft);padding:22px 0;color:var(--mute);font-size:15px;text-align:center}
+footer b{color:var(--ink)}
+@media(max-width:600px){.tab{padding:0 4px;font-size:15px}.tabrow{gap:4px}body{font-size:16px}.logo img{height:40px}.bar{width:90px}table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--mute);font-size:13px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.viewer{display:grid;grid-template-columns:290px minmax(0,1fr);gap:22px;align-items:start}
+.vlist{display:flex;flex-direction:column;gap:8px;position:sticky;top:84px}
+.vlist button{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 12px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 16px "IBM Plex Sans Arabic",sans-serif;text-align:start;cursor:pointer}
+.vlist button .num{margin:0;flex:none}
+.vlist button[aria-current=true]{border-color:var(--teal);background:var(--tealS);color:var(--teal)}
+.vlist button.ok .num{background:var(--ok);color:#fff}
+.vmain .card{padding:22px}
+.vmain h3{margin:16px 0 4px;font-size:clamp(22px,3vw,28px);line-height:1.25}
+.vmain .desc{color:var(--mute);margin:0 0 14px}
+@media(max-width:860px){.viewer{grid-template-columns:minmax(0,1fr)}.vlist{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px}.vlist button{flex:none;min-height:46px;font-size:15px}}
+.fbBtn{background:var(--vioS);color:var(--vio);border:2px solid var(--vio)}
+.fbk{display:none;margin-top:14px;border-radius:14px;border:2px solid var(--vio);background:var(--vioS);padding:16px 18px;line-height:1.8}
+.fbk.show{display:block}
+.fbk h5{margin:0 0 6px;font-size:17px;color:var(--vio)}
+.fbk ol,.fbk ul{margin:6px 0;padding-inline-start:22px}
+.fbk code,.fb code,.stmt code{display:inline-block;direction:ltr;unicode-bidi:isolate;font-family:"JetBrains Mono",monospace;background:var(--card);padding:1px 6px;border-radius:6px;font-size:.92em}
+.grpT{font-size:14px;color:var(--mute);margin:4px 0 6px;font-weight:700}
+.chips button.x{border-style:dashed}
+#labChips .chips button{font-family:"IBM Plex Sans Arabic",sans-serif;font-weight:700;unicode-bidi:plaintext;direction:rtl}
+.labH{margin:0 0 8px;font-size:20px;unicode-bidi:plaintext}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand"><span class="logo"><img src="data:image/png;base64,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wJsFBSwOOGBW9qGHHpro3bu3KipaeJuUsn+6g1J1anIagGnz58/PllJ62dm5QX3Jo1wXr37zTXRi586k64hbrpdVq1at6tWr18kpn21FvREBe++9N5h1jXZHjBixBkAhgML58+dn13WYI5lUqKysTNTjOnoUwKMrVqxw1q9fH6v5vSR/840g1y3dbtyqig9MBTB1/vz52YlEwsnKyuKauVpqzolBgwY9DeDpGTPecj3v/WwAOOaYYypOOumkCADmz5+/CAA+/fSTxPZRQUM2Vo/FnDkrYhUVK53169dXAsCHH364pkePHqfWNQ+r5kMpgLsA3DVjxoysrKwsRykVplxAqCs7XkVJSckFyWSFqEtu2BK3LxeUl5cuZmY9ZMiw0Koxi2UHeOCB4jseffRxLipa+KCVhsVi2eFNQgt2ZphgbtUpuE1WGhaLxSroPYvuqTSc9IUVhcViQVOPeluwk+sElhwlBM5MJCoZMM9biVgsFntUdDezaNGio4Vwfqy1Gec48uAgCP44ZMigW+up3WixWCywLo5mwhiMFUL8WQisDsPoiiuvHPxrq5wtFksm/H9GvmHmRcqIFgAAAABJRU5ErkJggg==" alt="وزارة التعليم"></span><span class="dept">الإدارة العامة<br>للتعليم بالطائف</span></div>
+      <div class="prog"><span id="progT">تقدمك 0%</span><span class="bar"><i id="progB"></i></span></div>
+    </div>
+    <div class="hero"><h1>التعلم الذاتي</h1><p>معلوماتية 1 – المرحلة الثالثة</p></div>
+  </div>
+</header>
+<nav class="tabs" aria-label="الأقسام"><div class="wrap tabrow" role="tablist">
+  <button class="tab" role="tab" data-v="start">ابدأ هنا</button>
+  <button class="tab" role="tab" data-v="lessons">الدروس</button>
+  <button class="tab" role="tab" data-v="problems">المسائل</button>
+  <button class="tab" role="tab" data-v="labs">المختبرات</button>
+</div></nav>
+
+<main class="wrap">
+  <section class="view" id="v-start">
+    <h2>كيف تفكّر قبل ما تكتب الكود؟</h2>
+    <p class="lead">ابدأ بهذا الفيديو: خوارزمية ذهنية من ست خانات تعبّيها في خيالك لكل مسألة.</p>
+    <div class="card big" id="thinkCard"></div>
+    <div class="six">
+      <div class="box"><b><span>١</span>افهم</b><p>المدخلات، المخرجات، والمطلوب بجملة وحدة.</p></div>
+      <div class="box key"><b><span>٢</span>فك المثال</b><p>كيف طلع الناتج من هذي الأرقام؟ خطواتك هي الحل.</p></div>
+      <div class="box"><b><span>٣</span>اقرأ القيود</b><p>كم n؟ وأي حل يمشي؟ تحتاج long long؟</p></div>
+      <div class="box"><b><span>٤</span>صنّف</b><p>تشبه أي مسألة حليتها قبل؟</p></div>
+      <div class="box"><b><span>٥</span>حوّل لكود</b><p>خطوة ← سطر، تكرار ← حلقة، مقارنة ← شرط.</p></div>
+      <div class="box"><b><span>٦</span>اختبر</b><p>جرّب المثال، ولا تترك المسألة فاضية.</p></div>
+    </div>
+    <h2>إشارات تساعدك تصنّف</h2>
+    <p class="lead">إذا شفت هذي الكلمات في نص المسألة، فكّر في الأسلوب اللي جنبها.</p>
+    <div class="card"><table class="stack"><thead><tr><th>إذا شفت</th><th>فكّر في</th><th>مسائل حليناها</th></tr></thead><tbody id="sigBody"></tbody></table></div>
+  </section>
+
+  <section class="view" id="v-lessons">
+    <h2>الدروس</h2>
+    <p class="lead">درس واحد في كل مرة. اختر الدرس، شاهده بهدوء، وبعدها انتقل للي بعده.</p>
+    <div class="viewer"><div class="vlist" id="lesList"></div><div class="vmain" id="lesMain"></div></div>
+  </section>
+
+  <section class="view" id="v-problems">
+    <h2>المسائل</h2>
+    <p class="lead">كل فيديو يشرح مجموعة مسائل من موقع موهبة. بعد ما تشاهد، جرّب تحلها بنفسك، وتدرّب عليها في المختبرات.</p>
+    <div class="viewer"><div class="vlist" id="proList"></div><div class="vmain" id="proMain"></div></div>
+  </section>
+
+  <section class="view" id="v-labs">
+    <h2>المختبرات</h2>
+    <p class="lead">درّب عقلك بنفسك بدون نماذج توليدية. حل، وبعدها اضغط «التغذية الراجعة» عشان تشوف الشرح كامل. كل حل صحيح يعطيك نجوم.</p>
+    <div class="seg" role="group" aria-label="المختبر">
+      <button data-lab="req" aria-pressed="true">مختبر المطلوب</button>
+      <button data-lab="cons" aria-pressed="false">مختبر القيود</button>
+      <button data-lab="code" aria-pressed="false">مختبر الكود</button>
+      <button data-lab="trace" aria-pressed="false">مختبر التتبع</button>
+    </div>
+    <div class="row" style="margin:0 0 12px"><span class="stars" id="starT"></span></div>
+    <div id="labChips"></div>
+    <div class="card" id="labBox"></div>
+  </section>
+</main>
+
+<footer><div class="wrap">فكرة وتصميم: <b>محمد مجممي</b> – الإدارة العامة للتعليم بالطائف<br><span style="font-size:13px">المسائل والأكواد من <a href="https://nsmobooklets.mawhiba.sa/ar/">موقع موهبة</a></span></div></footer>
+
+<script>
+{
+const LINKS={
+  think:'https://drive.google.com/file/d/1mHJypcu_aDpnqlfgtux6fEXSXG13sxFs/view',
+  sets:'https://drive.google.com/file/d/1i11KedLV0CmeWnYjNQ4bIEqgls4vOMYj/view',
+  maps:'https://drive.google.com/file/d/1aqgKd2v_Gmh0ERT_k_lCSzHcwlSfrS1T/view',
+  bitwise:'https://drive.google.com/file/d/17ROYdrAtk0mYpziVep9dWRXVN-1bSb60/view',
+  structs:'https://drive.google.com/file/d/1xPorESKkVz-wQn3P6HRkV4zypT1IVMQf/view',
+  complexity:'https://drive.google.com/file/d/1FoTToZE76x6qe8R9S2cHxJejetOtJDsm/view',
+  sorting:'https://drive.google.com/file/d/1GJNa3eTgWnnzq4j363-MgcV8fIafaAzq/view',
+  bsearch:'https://drive.google.com/file/d/16YRdHNvKleUVHEUvp1mJe2LzGMWGRiaq/view',
+  bits:'https://drive.google.com/file/d/1yzW8R4_7p7ONwS_jyVm_EIx_-eEsZeoO/view',
+  subsets:'https://drive.google.com/file/d/1SnZc6wZBmIwuDSaWCWyNreRIVoKA8PzZ/view',
+  g1:'https://drive.google.com/file/d/1jjLSoaxZTnlZwsXQ9ZusCqC_-5IOSAUA/view',
+  g2:'https://drive.google.com/file/d/1mB5HJ4VGOOp1sjej-pNYMNt_OP_sgG0D/view',
+  g3:'https://drive.google.com/file/d/1kWjQlKgDl2sM_cBZxH33OP1-GU414Z73/view',
+  g4:'https://drive.google.com/file/d/19bna6R3xrVmNR0q7Za0sWIUZhQi0ZF5m/view',
+  g5:'https://drive.google.com/file/d/1e-btIe7qwwQa1lGCT1YHItv7KhUuyZ6c/view',
+};
+const P='https://nsmobooklets.mawhiba.sa/ar/learn/part-c/problems/';
+const LESSONS=[
+ ['sets','المجموعات set','set يخزّن القيم بدون تكرار ومرتبة، وأهم أوامره: insert وerase وcount وfind.'],
+ ['maps','الخرائط map','map يربط كل مفتاح بقيمة: نعد التكرار، ونخزّن المعلومة ونرجع لها بالمفتاح.'],
+ ['bitwise','العمليات على البتات','العمليات & و | و ^ والإزاحة << و >> على التمثيل الثنائي للأعداد.'],
+ ['structs','الهياكل struct','struct يجمع أكثر من قيمة في نوع واحد، ونقدر نرتّبه بدالة مقارنة.'],
+ ['complexity','التعقيد الزمني','كيف تعرف من القيود هل حلك سريع بما يكفي، قبل ما تكتب الكود.'],
+ ['sorting','الترتيب','sort، والترتيب التنازلي، وترتيب الهياكل بدالة مقارنة.'],
+ ['bsearch','البحث الثنائي','البحث في مصفوفة مرتبة بقسمة النطاق نصين كل خطوة.'],
+ ['bits','حيل البتات','حيل سريعة على البتات، مثل إطفاء أصغر بت قيمته 1.'],
+ ['subsets','توليد المجموعات الجزئية','نجرّب كل المجموعات الجزئية بالـ bitmask.']];
+const GROUPS=[
+  ['g1','مسائل المجموعات والخرائط','المجموعات والخرائط',[['Distinct Numbers','distinct-numbers'],['Sum Of Two Values','sum-of-two-values'],['Registration System','registration-system']]],
+  ['g2','مسائل الترتيب','الترتيب • الهياكل',[['Dragons','dragons'],['Vanya and Lanterns','vanya-and-lanterns'],['Ferris Wheel','ferris-wheel']]],
+  ['g3','الترتيب والبحث الثنائي','الترتيب • البحث الثنائي',[['Interesting Drink','interesting-drink'],['Sum Of Three Values','sum-of-three-values']]],
+  ['g4','البحث الثنائي على الجواب','البحث الثنائي',[['Factory Machines','factory-machines'],['Array Division','array-division']]],
+  ['g5','مسائل البتات + تحدي','حيل البتات • توليد المجموعات',[['Raising Bacteria','raising-bacteria'],['Petr and a Combination Lock','petr-and-a-combination-lock'],['Preparing Olympiad','preparing-olympiad'],['Stick Lengths','stick-lengths',1]]]];
+const SIGNALS=[['كم قيمة مختلفة؟ مستخدم قبل كذا؟','set / map','Distinct Numbers • Registration System'],['زوج مجموعه x','map للمكمّل','Sum Of Two Values'],
+  ['بأي ترتيب؟ أقل عدد؟ أفضل اختيار؟','ترتيب + اختيار الأفضل','Dragons • Ferris Wheel'],['المسافة بين المتجاورين','ترتيب ثم مرور واحد','Vanya and Lanterns'],
+  ['لكل استعلام: كم عنصر ما يتعدى قيمة؟','ترتيب + بحث ثنائي','Interesting Drink • Sum Of Three Values'],
+  ['أقل وقت أو أصغر حد يحقق شرط','بحث ثنائي على الجواب','Factory Machines • Array Division'],
+  ['n صغيرة (15 أو 20) وكل الاختيارات','bitmask','Petr • Preparing Olympiad'],['تتضاعف، قوى 2','عمليات البتات','Raising Bacteria']];
+
+/* ===== بيانات المختبرات (x:1 = تدريب إضافي من خارج الموقع) ===== */
+const TECH=['set / map','ترتيب + اختيار الأفضل','ترتيب + بحث ثنائي','بحث ثنائي على الجواب','bitmask','حلقات بسيطة بدون أسلوب خاص','عمليات البتات'];
+const CX=['كل الاحتمالات 2ⁿ (n حتى 20)','n² (n حتى 5000 تقريبًا)','n log n أو أسرع (n حتى 10⁵ – 10⁶)'];
+const REQ=[
+ {n:'Distinct Numbers',s:'قائمة فيها n عدد صحيح. احسب كم قيمة مختلفة فيها.',
+  q:[['المدخلات',['n ثم n عدد صحيح','عدد واحد x','n ثم n اسم'],0],['المخرجات',['عدد واحد: كم قيمة مختلفة','YES أو NO','الأعداد مرتبة'],0],['المطلوب',['نعد القيم بدون تكرار','نرتب الأعداد','نجمع الأعداد'],0]],
+  i:'5\n2 3 2 2 3',o:'2',h:'القيم المختلفة: 2 و 3 بس.'},
+ {n:'Dragons',s:'Kirito قوته s وقدامه n تنين. يهزم التنين إذا قوته أكبر من قوة التنين، وتزيد قوته بمقدار زيادة التنين. يقاتل بأي ترتيب.',
+  q:[['المدخلات',['s و n، ثم لكل تنين: قوته وزيادته','عدد التنانين فقط','قوة Kirito فقط'],0],['المخرجات',['YES أو NO','أقل عدد تنانين','قوة Kirito النهائية'],0],['المطلوب',['هل يهزم كل التنانين بترتيب يختاره؟','كم تنين يهزم؟','أقوى تنين'],0]],
+  i:'2 2\n1 99\n100 0',o:'YES',h:'ابدأ بالأضعف: 2 > 1 فتصير 101، ثم 101 > 100.'},
+ {n:'Ferris Wheel',s:'n طفل يركبون العجلة الدوّارة. كل عربة تشيل طفل أو طفلين، ومجموع الأوزان ما يتعدى x.',
+  q:[['المدخلات',['n و x، ثم أوزان الأطفال','وزن طفل واحد','عدد العربات'],0],['المخرجات',['عدد واحد: أقل عدد عربات','YES أو NO','أوزان مرتبة'],0],['المطلوب',['أقل عدد عربات يكفي الكل','أثقل طفل','مجموع الأوزان'],0]],
+  i:'4 10\n7 2 3 9',o:'3',h:'رتّب: 2 3 7 9. الأثقل مع الأخف إذا ما تعدّوا 10.',f:'التسعة لحالها (2 + 9 = 11)، ثم 2 مع 7، ثم 3 لحاله: ثلاث عربات.'},
+ {n:'Raising Bacteria',s:'صندوق فاضي، كل صباح تضيف بكتيريا، وكل ليلة كل بكتيريا تنقسم اثنتين. تبي تشوف x بالضبط.',
+  q:[['المدخلات',['عدد واحد x','n ثم n عدد','عدد الأيام'],0],['المخرجات',['أقل عدد بكتيريا تضيفه بنفسك','عدد الليالي','YES أو NO'],0],['المطلوب',['أقل عدد نضيفه عشان نوصل x','أكبر عدد ممكن','x مضروب في 2'],0]],
+  i:'5',o:'2',h:'5 بالثنائي 101 = 4 + 1.',f:'الجواب هو عدد الآحاد في التمثيل الثنائي.'},
+ {n:'Factory Machines',s:'n آلة تشتغل مع بعض، الآلة i تحتاج kᵢ ثانية للمنتج. أقل وقت نصنع فيه t منتج؟',
+  q:[['المدخلات',['n و t، ثم أوقات الآلات','وقت آلة واحدة','عدد المنتجات فقط'],0],['المخرجات',['عدد واحد: أقل وقت','عدد المنتجات','YES أو NO'],0],['المطلوب',['أقل وقت يكفي لـ t منتج','أسرع آلة','مجموع الأوقات'],0]],
+  i:'3 7\n3 2 5',o:'8',h:'في 8 ثواني: 2 + 4 + 1 = 7 منتجات.',f:'وفي 7 ثواني: 2 + 3 + 1 = 6 بس، مو كافي.'},
+ {n:'Array Division',s:'قسّم المصفوفة إلى k أجزاء متتالية بحيث يكون أكبر مجموع جزء أصغر ما يمكن.',
+  q:[['المدخلات',['n و k، ثم الأعداد','k فقط','عدد واحد'],0],['المخرجات',['أكبر مجموع جزء في أفضل تقسيم','عدد الأجزاء','مجموع المصفوفة'],0],['المطلوب',['نصغّر أكبر مجموع جزء','نكبّر عدد الأجزاء','نرتب المصفوفة'],0]],
+  i:'5 3\n2 4 7 3 5',o:'8',h:'[2,4] [7] [3,5] ← المجاميع 6 و 7 و 8.'},
+ {n:'Petr and a Combination Lock',s:'قفل 360 درجة، والمؤشر من الصفر. n لفة، كل لفة مع العقارب أو عكسها. يرجع المؤشر للصفر؟',
+  q:[['المدخلات',['n ثم زاوية كل لفة','زاوية واحدة','الاتجاهات'],0],['المخرجات',['YES أو NO','الزاوية النهائية','عدد اللفات'],0],['المطلوب',['نقدر نختار الاتجاهات بحيث نرجع للصفر؟','أكبر زاوية','مجموع الزوايا'],0]],
+  i:'3\n10\n20\n30',o:'YES',h:'10 + 20 − 30 = 0.'},
+ {x:1,n:'أعلى درجة',s:'عندك درجات n طالب. اطبع أعلى درجة.',
+  q:[['المدخلات',['n ثم n درجة','درجة واحدة','أسماء الطلاب'],0],['المخرجات',['عدد واحد: أعلى درجة','كل الدرجات مرتبة','YES أو NO'],0],['المطلوب',['أكبر قيمة في القائمة','مجموع الدرجات','عدد الطلاب'],0]],
+  i:'5\n3 9 2 9 4',o:'9',h:'نمر على الأعداد ونحفظ الأكبر: 3 ثم 9 ثم تبقى 9.',f:'التكرار ما يغيّر شيء: التسعة تطلع مرة وحدة كجواب.'},
+ {x:1,n:'الأكثر تكرارًا',s:'قائمة فيها n عدد. اطبع كم مرة تكرر العدد اللي تكرر أكثر شيء.',
+  q:[['المدخلات',['n ثم n عدد','عدد واحد','زوج أعداد'],0],['المخرجات',['عدد واحد: أكبر عدد تكرار','العدد نفسه','YES أو NO'],0],['المطلوب',['نعد تكرار كل قيمة ونأخذ الأكبر','نرتب القائمة','نجمع الأعداد'],0]],
+  i:'6\n1 2 2 3 2 1',o:'3',h:'1 تكرر مرتين، 2 تكرر 3 مرات، 3 مرة وحدة.',f:'هذي إشارة «عد وتكرار» ← map عدّاد لكل قيمة.'},
+ {x:1,n:'هل فيه تكرار؟',s:'قائمة فيها n عدد. اطبع YES إذا فيه عدد تكرر، وإلا NO.',
+  q:[['المدخلات',['n ثم n عدد','عددين','نص'],0],['المخرجات',['YES أو NO','عدد التكرارات','العدد المكرر'],0],['المطلوب',['نكتشف هل فيه قيمة طلعت أكثر من مرة','نرتب تنازليًا','نطبع أصغر قيمة'],0]],
+  i:'4\n7 1 7 3',o:'YES',h:'السبعة طلعت مرتين.',f:'إشارة «مستخدم قبل كذا» ← set: إذا العدد موجود فيه قبل، فهو مكرر.'},
+ {x:1,n:'مجموع الزوجي',s:'قائمة فيها n عدد. اطبع مجموع الأعداد الزوجية بس.',
+  q:[['المدخلات',['n ثم n عدد','عدد واحد','n فقط'],0],['المخرجات',['عدد واحد: مجموع الزوجي','عدد الأعداد الزوجية','YES أو NO'],0],['المطلوب',['نجمع الأعداد اللي باقي قسمتها على 2 صفر','نجمع كل الأعداد','نطبع الفردي'],0]],
+  i:'5\n1 2 3 4 6',o:'12',h:'الزوجي: 2 و 4 و 6، ومجموعها 12.',f:'العدد زوجي إذا `a % 2 == 0`.'},
+ {x:1,n:'الناجحون',s:'درجات n طالب. الطالب ناجح إذا درجته 60 أو أكثر. اطبع عدد الناجحين.',
+  q:[['المدخلات',['n ثم n درجة','درجة النجاح فقط','أسماء الطلاب'],0],['المخرجات',['عدد واحد: كم طالب ناجح','أسماء الناجحين','أعلى درجة'],0],['المطلوب',['نعد الدرجات اللي 60 أو أكثر','نعد الدرجات أقل من 60','نجمع الدرجات'],0]],
+  i:'5\n55 60 90 40 75',o:'3',h:'الناجحون: 60 و 90 و 75.',f:'انتبه: 60 نفسها ناجحة لأن الشرط «60 أو أكثر» يعني `>=`.'},
+ {x:1,n:'أكبر فجوة',s:'نقاط على خط في مواقع مختلفة. رتّبها، واطبع أكبر مسافة بين نقطتين متجاورتين.',
+  q:[['المدخلات',['n ثم مواقع النقاط','نقطتين فقط','طول الخط'],0],['المخرجات',['عدد واحد: أكبر مسافة بين متجاورين','عدد النقاط','المواقع مرتبة'],0],['المطلوب',['نرتب ونحسب الفرق بين كل متجاورين','نجمع المواقع','نطبع أكبر موقع'],0]],
+  i:'4\n10 2 7 3',o:'4',h:'بعد الترتيب: 2 3 7 10، والفروق 1 و 4 و 3.',f:'إشارة «المتجاورين» ← ترتيب ثم مرور واحد، زي Vanya and Lanterns.'},
+ {x:1,n:'علب الحلوى',s:'عندك n حبة حلوى، وكل علبة تشيل k حبة. أقل عدد علب يكفي كل الحلوى؟',
+  q:[['المدخلات',['عددين: n و k','n فقط','قائمة أعداد'],0],['المخرجات',['عدد واحد: أقل عدد علب','عدد الحبات الباقية','YES أو NO'],0],['المطلوب',['نقسم n على k ونقرّب لفوق','نضرب n في k','نطرح k من n'],0]],
+  i:'10 3',o:'4',h:'3 علب تشيل 9، وتبقى حبة تحتاج علبة رابعة.',f:'التقريب لفوق بدون كسور: `(n + k - 1) / k`.'},
+ {x:1,n:'عدد الآحاد',s:'عندك عدد x. اطبع كم بت قيمته 1 في تمثيله الثنائي.',
+  q:[['المدخلات',['عدد واحد x','عددين','n ثم n عدد'],0],['المخرجات',['عدد واحد: كم بت قيمته 1','التمثيل الثنائي','YES أو NO'],0],['المطلوب',['نعد الآحاد في التمثيل الثنائي','نعد الأصفار','نقسم x على 2'],0]],
+  i:'10',o:'2',h:'10 بالثنائي 1010، فيه واحدين.',f:'نفس فكرة Raising Bacteria: `x = x & (x - 1)` يشيل واحد كل مرة.'}];
+
+const CONS=[
+ {n:'Distinct Numbers',c:['1 ≤ n ≤ 2·10⁵','1 ≤ xᵢ ≤ 10⁹'],a:[[2],1,[0]],e:['n تصل 2·10⁵ ← نحتاج n log n.','القيم تكفيها int، والعد ما يتعدى n.','«كم قيمة مختلفة» ← set. (والصفحة فيها حل ثاني بالترتيب.)']},
+ {n:'Sum Of Two Values',c:['1 ≤ n ≤ 2·10⁵','1 ≤ x, aᵢ ≤ 10⁹'],a:[[2],0,[0]],e:['n تصل 2·10⁵ ← n log n، وتجربة كل زوج n² بطيئة.','مجموع قيمتين ممكن يتعدى حدود int ← long long.','نخزّن اللي شفناه في map ونبحث عن المكمّل.']},
+ {n:'Registration System',c:['1 ≤ n ≤ 10⁵','الاسم ≤ 32 حرف'],a:[[2],1,[0]],e:['n تصل 10⁵ ← n log n.','العدّاد ما يتعدى n ← int.','«مستخدم قبل كذا» ← map عدّاد لكل اسم.']},
+ {n:'Dragons',c:['1 ≤ s ≤ 10⁴','1 ≤ n ≤ 10³','1 ≤ xᵢ ≤ 10⁴','0 ≤ yᵢ ≤ 10⁴'],a:[[1,2],1,[1]],e:['n ألف بس ← n² أو n log n كلها تمشي.','أكبر قوة حوالي 10⁷ ← int يكفي.','«بأي ترتيب» ← ترتيب، ونقاتل الأضعف أولًا.']},
+ {n:'Ferris Wheel',c:['1 ≤ n ≤ 2·10⁵','1 ≤ x ≤ 10⁹','1 ≤ pᵢ ≤ x'],a:[[2],1,[1]],e:['n تصل 2·10⁵ ← n log n.','أكبر مجموع طفلين 2·10⁹ داخل حدود int، وكود الصفحة يستخدم int.','«أقل عدد» ← ترتيب، والأثقل مع الأخف.']},
+ {n:'Interesting Drink',c:['1 ≤ n, q ≤ 10⁵','1 ≤ xᵢ ≤ 10⁵','1 ≤ mᵢ ≤ 10⁹'],a:[[2],1,[2]],e:['n·q تصل 10¹⁰ بطيئة ← (n + q) log n.','الصفحة: القيم حتى مليار تكفيها int.','«كم عنصر ما يتعدى قيمة» لكل يوم ← ترتيب + بحث ثنائي.']},
+ {n:'Sum Of Three Values',c:['1 ≤ n ≤ 5000','1 ≤ x, aᵢ ≤ 10⁹'],a:[[1],0,[2]],e:['n حتى 5000 ← حوالي n² (حل الصفحة n² log n).','مجموع ثلاث قيم يوصل 3·10⁹ ← long long.','نثبّت اثنين ونبحث عن الثالثة ← ترتيب + بحث ثنائي.']},
+ {n:'Factory Machines',c:['1 ≤ n ≤ 2·10⁵','1 ≤ t, kᵢ ≤ 10⁹'],a:[[2],0,[3]],e:['كل فحص n، والبحث حوالي 60 خطوة.','الأوقات توصل 10¹⁸ ← long long.','«أقل وقت يحقق شرط» ← بحث ثنائي على الجواب.']},
+ {n:'Array Division',c:['1 ≤ n ≤ 2·10⁵','1 ≤ k ≤ n','1 ≤ xᵢ ≤ 10⁹'],a:[[2],0,[3]],e:['كل فحص n، والبحث على مجموع المصفوفة.','المجموع يوصل 2·10¹⁴ ← long long.','«أصغر حد يحقق شرط» ← بحث ثنائي على الجواب.']},
+ {n:'Preparing Olympiad',c:['1 ≤ n ≤ 15','1 ≤ l ≤ r ≤ 10⁹','1 ≤ x, cᵢ ≤ 10⁶'],a:[[0],1,[4]],e:['n حتى 15 ← نجرب كل المجموعات 2ⁿ.','أكبر مجموع 15 × 10⁶ ← int يكفي.','«كل الاختيارات» و n صغيرة ← bitmask.']},
+ {n:'Petr and a Combination Lock',c:['1 ≤ n ≤ 15','1 ≤ aᵢ ≤ 180'],a:[[0],1,[4]],e:['n حتى 15 ← كل الاتجاهات 2ⁿ.','أكبر مجموع 15 × 180 ← int.','كل لفة اتجاهين ← bitmask.']},
+ {n:'Raising Bacteria',c:['1 ≤ x ≤ 10⁹'],a:[[2],1,[6]],e:['الحل يمر على بتات x، حوالي 30 خطوة بس.','x حتى مليار ← int يكفي.','«تتضاعف» و«قوى 2» ← عمليات البتات.']},
+ {x:1,n:'مجموع قائمة كبيرة',s:'اطبع مجموع n عدد.',c:['1 ≤ n ≤ 10⁶','1 ≤ aᵢ ≤ 10⁹'],a:[[2],0,[5]],e:['مرور واحد n يكفي حتى مع مليون.','المجموع يوصل 10⁶ × 10⁹ = 10¹⁵ ← long long.','ما تحتاج أي أسلوب خاص: حلقة وحدة تجمع.']},
+ {x:1,n:'أسئلة الدرجات',s:'درجات n طالب، وعندك q سؤال: كم طالب درجته x أو أكثر؟',c:['1 ≤ n, q ≤ 2·10⁵','1 ≤ الدرجة ≤ 100'],a:[[2],1,[2]],e:['لو نعد لكل سؤال من جديد صار n·q بطيء ← نرتب مرة ونبحث لكل سؤال.','الأعداد صغيرة ← int.','«لكل سؤال: كم عنصر…» ← ترتيب + بحث ثنائي، زي Interesting Drink.']},
+ {x:1,n:'رقم مكرر',s:'قائمة فيها n عدد: هل فيه عدد تكرر؟',c:['1 ≤ n ≤ 2·10⁵','1 ≤ aᵢ ≤ 10⁹'],a:[[2],1,[0]],e:['مقارنة كل زوج n² بطيئة مع 2·10⁵ ← n log n.','ما فيه جمع ← int.','«مستخدم قبل كذا» ← set.']},
+ {x:1,n:'كتب بعدد صفحات محدد',s:'عندك n كتاب. هل تقدر تختار بعضها بحيث مجموع صفحاتها S بالضبط؟',c:['1 ≤ n ≤ 18','1 ≤ الصفحات ≤ 1000'],a:[[0],1,[4]],e:['n حتى 18 ← 2¹⁸ مجموعة تقريبًا 262 ألف، يمشي.','أكبر مجموع 18 × 1000 ← int.','«نختار بعضها» و n صغيرة ← bitmask.']},
+ {x:1,n:'أقل سرعة تحميل',s:'عندك n ملف بأحجام مختلفة، ولازم يخلص التحميل خلال H ساعة. أقل سرعة تكفي؟',c:['1 ≤ n ≤ 10⁵','1 ≤ الحجم ≤ 10⁹','n ≤ H ≤ 10⁹'],a:[[2],0,[3]],e:['نجرب سرعة ونفحص بـ n، والبحث حوالي 30 خطوة.','مجموع الأحجام يوصل 10¹⁴ ← long long.','«أقل سرعة تحقق شرط»، وإذا نجحت سرعة تنجح الأكبر منها ← بحث ثنائي على الجواب.']},
+ {x:1,n:'أكثر عدد هدايا',s:'معك ميزانية B، وفيه n هدية بأسعار مختلفة. أكبر عدد هدايا تقدر تشتريه؟',c:['1 ≤ n ≤ 2·10⁵','1 ≤ السعر ≤ 10⁹','1 ≤ B ≤ 10¹⁸'],a:[[2],0,[1]],e:['نرتب n log n ثم مرور واحد.','الميزانية تصل 10¹⁸ ← long long.','«أكبر عدد» ← رتّب واشتر الأرخص أولًا: ترتيب + اختيار الأفضل.']},
+ {x:1,n:'أزواج مجموعها زوجي',s:'قائمة فيها n عدد: كم زوج (i < j) مجموعه زوجي؟',c:['1 ≤ n ≤ 3000','1 ≤ aᵢ ≤ 100'],a:[[1,2],1,[5]],e:['n حتى 3000 ← تجربة كل زوج n² تقريبًا 4.5 مليون، يمشي.','عدد الأزواج أقل من 4.5 مليون ← int.','حلقتين بسيطتين تكفي، بدون أسلوب خاص.']}];
+
+const CODE=[
+ {n:'Dragons',l:['bool weaker(Dragon a, Dragon b) {','    return a.strength {0} b.strength;','}','// ...','    sort(dragons.begin(), dragons.end(), {1});','    for (int i = 0; i < n; i++) {','        if (s {2} dragons[i].strength) {','            cout << "NO\\n";','            return 0;','        }','        s {3} dragons[i].bonus;','    }','    cout << "YES\\n";'],
+  b:[[['<','>','=='],'نرتّب من الأضعف إلى الأقوى.'],[['weaker','greater','min'],'دالة المقارنة اللي كتبناها فوق.'],[['<=','<','>'],'القوة المتساوية خسارة، لذلك `<=`.'],[['+=','-=','='],'الزيادة تنضاف لقوة Kirito.']]},
+ {n:'Raising Bacteria',l:['    int answer = 0;','    while (x {0} 0) {','        x = x & ({1});  // remove the lowest set bit','        answer++;','    }','    cout << answer << "\\n";'],
+  b:[[['>','<','=='],'نكرر ما دام فيه بتات.'],[['x - 1','x + 1','x >> 1'],'`x & (x - 1)` يشيل أصغر بت قيمته 1.']]},
+ {n:'Registration System',l:['        if (count[name] {0} 0) {','            cout << "OK\\n";','        } else {','            cout << name + {1}(count[name]) << "\\n";','        }','        count[name]{2};'],
+  b:[[['==','!=','>'],'العداد صفر ← الاسم جديد ← OK.'],[['to_string','stoi','size'],'نحوّل العداد إلى نص ونلصقه بالاسم.'],[['++','--',' = 0'],'في الحالتين نزيد العداد.']]},
+ {n:'Interesting Drink',l:['        int left = 0, right = n - 1;','        int first = {0};','        while (left <= right) {','            int mid = (left + right) / 2;','            if (x[mid] {1} m) {','                first = mid;','                right = {2};','            } else {','                left = mid + 1;','            }','        }','        cout << first << "\\n";'],
+  b:[[['n','0','-1'],'إذا ما فيه سعر أكبر من m، الجواب n.'],[['>','>=','<'],'أول سعر أكبر من m، و `>=` يغلط لما السعر يساوي m.'],[['mid - 1','mid + 1','mid'],'لقينا مرشح ← ندوّر في اليسار.']]},
+ {n:'Ferris Wheel',l:['    sort(p.begin(), p.end());','    int left = 0;       // the lightest child without a gondola','    int right = n - 1;  // the heaviest child without a gondola','    int gondolas = 0;','    while (left {0} right) {','        if (left < right && p[left] + p[right] {1} x) {','            left++;  // the lightest child rides with the heaviest child','        }','        {2};','        gondolas++;','    }'],
+  b:[[['<=','<','!='],'لما `left == right` باقي طفل واحد، ياخذ عربة.'],[['<=','<','>'],'المجموع ما يتعدى x.'],[['right--','left++','right++'],'الأثقل ياخذ عربة دائمًا.']]},
+ {n:'Factory Machines',l:['bool enough(long long time) {','    long long products = 0;','    for (int i = 0; i < n; i++) {','        products += time {0} k[i];','        if (products >= t) {','            return true;  // stop early, so that products does not overflow','        }','    }','    return false;','}','// ...','        long long mid = {1};','        if (enough(mid)) {','            answer = mid;','            right = mid - 1;','        } else {','            left = {2};','        }'],
+  b:[[['/','*','%'],'كل آلة تصنع: الوقت ÷ وقتها.'],[['left + (right - left) / 2','(left + right) / 2','right / 2'],'الصفحة تنبّه: `left + right` ممكن يتعدى الحدود.'],[['mid + 1','mid - 1','mid'],'مو كافي ← ندوّر يمين.']]},
+ {n:'Petr and a Combination Lock',l:['    for (int mask = 0; mask < (1 << n); mask++) {','        int angle = 0;','        for (int j = 0; j < n; j++) {','            if (mask & (1 << j)) {','                angle {0} a[j];','            } else {','                angle {1} a[j];','            }','        }','        if (angle % {2} == 0) {'],
+  b:[[['+=','-='],'البت 1 ← مع العقارب ← نجمع.'],[['-=','+='],'البت 0 ← عكسها ← نطرح.'],[['360','180','2'],'يرجع للصفر إذا المجموع يقبل القسمة على 360.']]},
+ {x:1,n:'أعلى درجة',s:'نحفظ الأكبر ونحن نمر على القائمة.',l:['    int mx = a[0];','    for (int i = 1; i < n; i++)','        if (a[i] {0} mx) mx = a[i];','    cout << mx;'],
+  b:[[['>','<','=='],'إذا لقينا قيمة أكبر من اللي محفوظ، نحدّثه.']],f:'نبدأ بأول عنصر بدل صفر، عشان الكود يصح حتى لو كل القيم سالبة.'},
+ {x:1,n:'الأكثر تكرارًا',s:'map يعد كل قيمة، وبعدها ناخذ أكبر عدد.',l:['    map<int, int> cnt;','    for (int i = 0; i < n; i++) cnt[a[i]]{0};','    int best = 0;','    for (auto p : cnt) best = max(best, p.{1});','    cout << best;'],
+  b:[[['++','--',' = 1'],'كل ما شفنا القيمة نزيد عدادها.'],[['second','first','size()'],'`first` هو المفتاح (القيمة)، و `second` هو العدد.']]},
+ {x:1,n:'هل فيه تكرار؟',s:'set يتذكر اللي شفناه.',l:['    set<int> s;','    for (int i = 0; i < n; i++) {','        if (s.{0}(a[i])) { cout << "YES"; return 0; }','        s.{1}(a[i]);','    }','    cout << "NO";'],
+  b:[[['count','size','erase'],'`count` يرجع 1 إذا القيمة موجودة قبل.'],[['insert','erase','find'],'نضيف القيمة عشان نتذكرها.']]},
+ {x:1,n:'أول عنصر ≥ x',s:'بحث ثنائي في مصفوفة مرتبة.',l:['    int lo = 0, hi = n - 1, ans = n;','    while (lo {0} hi) {','        int mid = (lo + hi) / 2;','        if (a[mid] >= x) { ans = mid; hi = {1}; }','        else lo = {2};','    }','    cout << ans;'],
+  b:[[['<=','<','!='],'نكمّل ما دام النطاق فيه عنصر واحد على الأقل.'],[['mid - 1','mid + 1','mid'],'لقينا مرشح ← نجرّب نلقى أصغر منه يسار.'],[['mid + 1','mid - 1','mid'],'العنصر أصغر من x ← الجواب يمين.']],f:'`ans = n` تعني: ما فيه عنصر أكبر من أو يساوي x.'},
+ {x:1,n:'مجموعات بمجموع S',s:'نجرب كل المجموعات بالـ bitmask.',l:['    int cnt = 0;','    for (int mask = 0; mask < (1 {0} n); mask++) {','        long long sum = 0;','        for (int j = 0; j < n; j++)','            if (mask {1} (1 << j)) sum += a[j];','        if (sum == S) cnt++;','    }'],
+  b:[[['<<','>>','*'],'`1 << n` يساوي 2ⁿ: عدد كل المجموعات.'],[['&','|','^'],'`&` يفحص هل البت j موجود في mask.']]},
+ {x:1,n:'ترتيب الطلاب',s:'نرتب الطلاب من الأعلى درجة.',l:['struct Student { string name; int score; };','bool better(Student a, Student b) {','    return a.score {0} b.score;','}','// ...','    sort(v.begin(), v.end(), {1});'],
+  b:[[['>','<','=='],'`>` يخلي الأعلى درجة أول.'],[['better','greater','max'],'نمرر دالة المقارنة اللي كتبناها.']]},
+ {x:1,n:'مجموع كبير',s:'n حتى مليون، والقيم حتى مليار.',l:['    {0} total = 0;','    for (int i = 0; i < n; i++) total += a[i];','    cout << total;'],
+  b:[[['long long','int','bool'],'المجموع يوصل 10¹⁵، و int ما يشيل أكثر من حوالي 2·10⁹.']]}];
+
+const TRACE=[
+ {x:1,n:'set',s:'تذكّر: set ما يكرر، ويرتّب.',l:['set<int> s = {5, 1, 5, 3, 1};','s.insert(4);','s.erase(1);','cout << s.size() << " " << *s.begin();'],o:'3 3',
+  t:['بعد الإنشاء: `{1, 3, 5}` لأن التكرار ينحذف ويترتب.','`insert(4)` ← `{1, 3, 4, 5}`.','`erase(1)` ← `{3, 4, 5}`.','الحجم 3، وأول عنصر 3.']},
+ {x:1,n:'map عدّاد',s:'نعد كل حرف في الكلمة.',l:['string w = "banana";','map<char, int> c;','for (char ch : w) c[ch]++;','cout << c[\'a\'] << " " << c[\'n\'] << " " << c.size();'],o:'3 2 3',
+  t:['الحروف: b a n a n a.','`a` تكررت 3 مرات، `n` مرتين، `b` مرة.','عدد المفاتيح المختلفة: 3 (a و b و n).']},
+ {x:1,n:'sort',s:'ترتيب تصاعدي ثم نطبع مواقع.',l:['vector<int> v = {4, 1, 3, 9, 7};','sort(v.begin(), v.end());','cout << v[0] << " " << v[4] << " " << v[2];'],o:'1 9 4',
+  t:['بعد الترتيب: `1 3 4 7 9`.','`v[0] = 1`، `v[4] = 9`، `v[2] = 4`.']},
+ {x:1,n:'sort تنازلي',s:'greater يعكس الترتيب.',l:['vector<int> v = {2, 8, 5};','sort(v.begin(), v.end(), greater<int>());','for (int x : v) cout << x << " ";'],o:'8 5 2',
+  t:['`greater<int>()` يرتب من الأكبر للأصغر.','النتيجة: `8 5 2`.']},
+ {x:1,n:'بحث ثنائي',s:'أول موقع قيمته ≥ 5.',l:['vector<int> a = {2, 4, 4, 7, 9};','int x = 5, lo = 0, hi = 4, ans = 5;','while (lo <= hi) {','    int mid = (lo + hi) / 2;','    if (a[mid] >= x) { ans = mid; hi = mid - 1; }','    else lo = mid + 1;','}','cout << ans;'],o:'3',
+  t:['lo=0, hi=4 ← mid=2، `a[2]=4` أصغر من 5 ← lo=3.','lo=3, hi=4 ← mid=3، `a[3]=7` ≥ 5 ← ans=3، hi=2.','lo=3 أكبر من hi=2 ← نوقف.'],f:'أول قيمة ≥ 5 هي 7 في الموقع 3.'},
+ {x:1,n:'& | ^',s:'العمليات على البتات.',l:['int a = 6, b = 3;','cout << (a & b) << " " << (a | b) << " " << (a ^ b);'],o:'2 7 5',
+  t:['6 = `110`، 3 = `011`.','`&` (الاثنين 1): `010` = 2.','`|` (واحد منهم على الأقل 1): `111` = 7.','`^` (مختلفين): `101` = 5.']},
+ {x:1,n:'الإزاحة',s:'<< تضرب في 2، و >> تقسم على 2.',l:['int x = 5;','cout << (x << 2) << " " << (x >> 1);'],o:'20 2',
+  t:['`x << 2` = 5 × 2 × 2 = 20.','`x >> 1` = 5 ÷ 2 بدون كسر = 2.']},
+ {x:1,n:'عد الآحاد',s:'x & (x - 1) يشيل أصغر بت 1.',l:['int x = 13, c = 0;','while (x > 0) {','    x = x & (x - 1);','    c++;','}','cout << c;'],o:'3',
+  t:['13 = `1101`.','`1101 & 1100 = 1100` (12)، c=1.','`1100 & 1011 = 1000` (8)، c=2.','`1000 & 0111 = 0000`، c=3، ونوقف.']},
+ {x:1,n:'bitmask',s:'كم مجموعة من {1, 2, 4} مجموعها 5؟',l:['int a[3] = {1, 2, 4};','int cnt = 0;','for (int mask = 0; mask < (1 << 3); mask++) {','    int sum = 0;','    for (int j = 0; j < 3; j++)','        if (mask & (1 << j)) sum += a[j];','    if (sum == 5) cnt++;','}','cout << cnt;'],o:'1',
+  t:['فيه 8 مجموعات (mask من 0 إلى 7).','المجموع 5 يطلع بس من 1 + 4، يعني mask = `101` = 5.','باقي المجموعات مجاميعها: 0، 1، 2، 3، 4، 6، 7.']},
+ {x:1,n:'struct + ترتيب',s:'نرتب من الأعلى درجة.',l:['struct P { string name; int score; };','bool better(P a, P b) { return a.score > b.score; }','vector<P> v = {{"Fahad", 70}, {"Nora", 95}, {"Saad", 80}};','sort(v.begin(), v.end(), better);','cout << v[0].name << " " << v[2].name;'],o:'Nora Fahad',
+  t:['`better` يقدّم الأعلى درجة.','بعد الترتيب: Nora 95، Saad 80، Fahad 70.','`v[0]` Nora، و `v[2]` Fahad.']},
+ {x:1,n:'مؤشران',s:'نبحث عن زوج مجموعه 9 في مصفوفة مرتبة.',l:['vector<int> v = {1, 2, 4, 7, 11};','int x = 9, l = 0, r = 4;','while (l < r) {','    int s = v[l] + v[r];','    if (s == x) break;','    if (s < x) l++; else r--;','}','cout << l << " " << r;'],o:'1 3',
+  t:['1 + 11 = 12 أكبر من 9 ← r=3.','1 + 7 = 8 أصغر من 9 ← l=1.','2 + 7 = 9 ← وقفنا.']},
+ {x:1,n:'كم خطوة؟',s:'i تتضاعف كل مرة.',l:['int n = 16, steps = 0;','for (int i = 1; i < n; i *= 2) steps++;','cout << steps;'],o:'4',
+  t:['i = 1، 2، 4، 8 ← أربع خطوات.','i = 16 مو أصغر من 16 ← نوقف.'],f:'هذا معنى log₂ n: عدد مرات المضاعفة إلى n.'},
+ {x:1,n:'map المكمّل',s:'زوج مجموعه 10.',l:['vector<int> a = {3, 5, 2, 8};','int x = 10;','map<int, int> seen;','for (int i = 0; i < 4; i++) {','    if (seen.count(x - a[i])) { cout << seen[x - a[i]] << " " << i; break; }','    seen[a[i]] = i;','}'],o:'2 3',
+  t:['i=0: نحتاج 7، ما شفناه ← نخزّن 3.','i=1: نحتاج 5، ما شفناه ← نخزّن 5.','i=2: نحتاج 8، ما شفناه ← نخزّن 2 في الموقع 2.','i=3: نحتاج 2، شفناه في الموقع 2 ← نطبع `2 3`.']},
+ {x:1,n:'حلقتين',s:'كم زوج (i < j)؟',l:['int cnt = 0;','for (int i = 0; i < 4; i++)','    for (int j = i + 1; j < 4; j++)','        cnt++;','cout << cnt;'],o:'6',
+  t:['i=0: j=1,2,3 ← 3.','i=1: j=2,3 ← 2.','i=2: j=3 ← 1.','i=3: ولا شيء.','المجموع 3 + 2 + 1 = 6.'],f:'عدد الأزواج n × (n − 1) ÷ 2، ولهذا تجربة كل زوج n².'}];
+
+
+/* ===== التخزين والأدوات ===== */
+let S={seen:{},lab:{},les:0,pro:0};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem('nsmo-self-v1'))||{})}catch(e){}
+const save=()=>{try{localStorage.setItem('nsmo-self-v1',JSON.stringify(S))}catch(e){}updProg()};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const md=s=>esc(s).replace(/`([^`]+)`/g,'<code>$1</code>');
+const $=q=>document.querySelector(q);
+function embed(u){if(!u)return'';let m=u.match(/drive\.google\.com\/file\/d\/([\w-]+)/)||u.match(/[?&]id=([\w-]+)/);
+  if(m&&u.includes('drive.google'))return'https://drive.google.com/file/d/'+m[1]+'/preview';
+  m=u.match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/);if(m)return'https://www.youtube-nocookie.com/embed/'+m[1]+'?rel=0';return u}
+function player(id,title){const u=LINKS[id];return `<div class="vid">${u?`<button class="play" data-play="${id}" aria-label="تشغيل ${esc(title)}"><span class="c"></span>اضغط للتشغيل</button>`:`<div class="soon">الفيديو يُضاف قريبًا</div>`}</div>`}
+const seenBtn=id=>`<button class="seen${S.seen[id]?' on':''}" data-seen="${id}">${S.seen[id]?'شاهدته ✓':'علّم كمُشاهد'}</button>`;
+
+/* ===== ابدأ هنا ===== */
+$('#thinkCard').innerHTML=player('think','كيف تفكّر قبل ما تكتب الكود؟')+`<div class="vmeta"><h3>كيف تفكّر قبل ما تكتب الكود؟</h3>${seenBtn('think')}</div>`;
+$('#sigBody').innerHTML=SIGNALS.map(r=>`<tr><td>${esc(r[0])}</td><td class="tech">${esc(r[1])}</td><td><span class="ltr">${esc(r[2])}</span></td></tr>`).join('');
+
+/* ===== عارض الدروس والمسائل: واحد في كل مرة ===== */
+function viewer(listEl,mainEl,items,key,render){
+  const draw=()=>{const k=S[key]||0;
+    listEl.innerHTML=items.map((it,i)=>`<button data-i="${i}" aria-current="${i===k}" class="${S.seen[it[0]]?'ok':''}"><span class="num">${S.seen[it[0]]?'✓':i+1}</span>${esc(it[1])}</button>`).join('');
+    const it=items[k];
+    mainEl.innerHTML=`<div class="card">${player(it[0],it[1])}<h3>${esc(it[1])}</h3>${render(it)}
+      <div class="row">${seenBtn(it[0])}<span style="flex:1"></span><button class="btn alt" data-mv="-1">→ السابق</button><button class="btn" data-mv="1">التالي ←</button></div></div>`};
+  listEl.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S[key]=+b.dataset.i;save();draw()});
+  mainEl.addEventListener('click',e=>{const b=e.target.closest('[data-mv]');if(!b)return;S[key]=(S[key]+(+b.dataset.mv)+items.length)%items.length;save();draw();listEl.scrollIntoView({behavior:'smooth',block:'nearest'})});
+  draw();return draw}
+const drawLes=viewer($('#lesList'),$('#lesMain'),LESSONS,'les',it=>`<p class="desc">${esc(it[2])}</p>`);
+const drawPro=viewer($('#proList'),$('#proMain'),GROUPS,'pro',it=>`<p class="desc"><span class="tag">الدرس: ${esc(it[2])}</span></p>
+  <div class="grpT">صفحات المسائل على موقع موهبة</div><ul class="plist" style="margin-top:0">${it[3].map(p=>`<li><a href="${P+p[1]}.html" target="_blank" rel="noopener"${p[2]?' class="ch"':''}>${esc(p[0])}${p[2]?' • تحدي':''}</a></li>`).join('')}</ul>`);
+
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-play]');if(p){const id=p.dataset.play;const box=p.parentElement;
+    box.innerHTML=`<iframe src="${esc(embed(LINKS[id]))}" allow="autoplay; fullscreen; encrypted-media" allowfullscreen title="فيديو"></iframe>`;
+    if(!S.seen[id]){S.seen[id]=1;save();refreshSeen(id)}}
+  const s=e.target.closest('[data-seen]');if(s){const id=s.dataset.seen;S.seen[id]=S.seen[id]?0:1;save();refreshSeen(id)}});
+function refreshSeen(id){document.querySelectorAll(`[data-seen="${id}"]`).forEach(b=>{b.classList.toggle('on',!!S.seen[id]);b.textContent=S.seen[id]?'شاهدته ✓':'علّم كمُشاهد'});
+  document.querySelectorAll('.vlist button').forEach(b=>{});drawListsOnly()}
+function drawListsOnly(){[['#lesList',LESSONS,'les'],['#proList',GROUPS,'pro']].forEach(([sel,items,key])=>{document.querySelectorAll(sel+' button').forEach((b,i)=>{const ok=!!S.seen[items[i][0]];b.classList.toggle('ok',ok);b.querySelector('.num').textContent=ok?'✓':i+1})})}
+
+/* ===== التبويبات ===== */
+const VIEWS=['start','lessons','problems','labs'];
+function show(v){if(!VIEWS.includes(v))v='start';
+  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.v===v))}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{location.hash=t.dataset.v;show(t.dataset.v);window.scrollTo({top:document.querySelector('nav.tabs').offsetTop,behavior:'smooth'})}));
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+
+/* ===== المختبرات ===== */
+let lab='req',idx=0,got={};
+const DATA={req:REQ,cons:CONS,code:CODE,trace:TRACE};
+const key=()=>lab+':'+DATA[lab][idx].n;
+function perm(n,seed){const a=[...Array(n).keys()];let h=7;for(const c of seed)h=(h*31+c.charCodeAt(0))>>>0;for(let i=n-1;i>0;i--){h=(h*1103515245+12345)>>>0;const j=h%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+function optsHTML(list,qi,mix){const ord=mix?perm(list.length,mix+qi):[...list.keys()];return `<div class="opts">${ord.map(j=>`<button class="opt" data-q="${qi}" data-j="${j}">${esc(list[j])}</button>`).join('')}</div><div class="fb" id="fb${qi}"></div>`}
+function stars(){const n=Object.values(S.lab).reduce((a,b)=>a+b,0);$('#starT').textContent='★ نجومك: '+n}
+function chips(){const L=DATA[lab];const b=(x,i)=>`<button aria-pressed="${i===idx}" class="${S.lab[lab+':'+x.n]?'done':''}${x.x?' x':''}" data-i="${i}">${esc(x.n)}</button>`;
+  const site=L.map((x,i)=>[x,i]).filter(([x])=>!x.x),extra=L.map((x,i)=>[x,i]).filter(([x])=>x.x);
+  $('#labChips').innerHTML=(site.length?`<div class="grpT">من مسائل موقع موهبة</div><div class="chips">${site.map(([x,i])=>b(x,i)).join('')}</div>`:'')+
+    (extra.length?`<div class="grpT">تدريب إضافي</div><div class="chips">${extra.map(([x,i])=>b(x,i)).join('')}</div>`:'')}
+function mark(pts){const k=key();if(!S.lab[k]){S.lab[k]=pts;save();chips();stars()}}
+function hlc(s){const ci=s.indexOf('//');if(ci>=0)return hlc(s.slice(0,ci))+`<span class="cm">${esc(s.slice(ci))}</span>`;
+  return esc(s).replace(/\b(int|long|bool|char|string|for|while|if|else|return|auto|struct|vector|set|map)\b/g,'<span style="color:#c792ea">$1</span>').replace(/(&quot;[^&]*?&quot;)/g,'<span style="color:#c3e88d">$1</span>')}
+const AR=['١','٢','٣','٤'];
+function feedback(x){
+  if(lab==='req')return `<h5>الشرح الكامل</h5><ol>${x.q.map(q=>`<li><b>${esc(q[0])}:</b> ${esc(q[1][q[2]])}</li>`).join('')}<li><b>فك المثال:</b> الناتج <code>${esc(x.o)}</code>. ${md(x.h)}</li></ol>${x.f?`<p style="margin:6px 0 0">${md(x.f)}</p>`:''}`;
+  if(lab==='cons')return `<h5>الشرح الكامل</h5><ol><li><b>التعقيد:</b> ${x.a[0].map(i=>esc(CX[i])).join(' أو ')}. ${md(x.e[0])}</li><li><b>long long:</b> ${x.a[1]===0?'نعم':'لا'}. ${md(x.e[1])}</li><li><b>التصنيف:</b> ${x.a[2].map(i=>esc(TECH[i])).join(' أو ')}. ${md(x.e[2])}</li></ol>`;
+  if(lab==='code')return `<h5>الشرح الكامل</h5><ol>${x.b.map(b=>`<li><code>${esc(b[0][0])}</code> ← ${md(b[1])}</li>`).join('')}</ol>${x.f?`<p style="margin:6px 0 0">${md(x.f)}</p>`:''}`;
+  return `<h5>التتبع خطوة خطوة</h5><ol>${x.t.map(s=>`<li>${md(s)}</li>`).join('')}</ol><p style="margin:6px 0 0"><b>الناتج:</b> <code>${esc(x.o)}</code>${x.f?' — '+md(x.f):''}</p>`}
+function renderLab(){got={};chips();stars();const x=DATA[lab][idx];const box=$('#labBox');
+  const head=`<h3 class="labH">${esc(x.n)}</h3>`;
+  const tail=`<div class="row"><button class="btn fbBtn" id="fbkB">التغذية الراجعة</button><span style="flex:1"></span><button class="btn alt" id="prevB">→ السابقة</button><button class="btn alt" id="nextB">التالية ←</button></div><div class="fbk" id="fbk">${feedback(x)}</div>`;
+  if(lab==='req'){box.innerHTML=head+`<div class="stmt">${md(x.s)}</div>
+    ${x.q.map((q,qi)=>`<div class="q"><h4>${AR[qi]} ${esc(q[0])}؟</h4>${optsHTML(q[1],qi,x.n)}</div>`).join('')}
+    <div class="q"><h4>٤ فك المثال: وش الناتج؟</h4><div class="io"><pre class="sample">${esc(x.i)}</pre><div><div class="ans"><input id="ansI" aria-label="الناتج" placeholder="؟"><button class="btn" id="ansB">تحقق</button></div><div class="fb" id="fbA"></div></div></div></div>`+tail}
+  else if(lab==='cons'){box.innerHTML=head+(x.s?`<div class="stmt">${md(x.s)}</div>`:'')+`<div class="cons">${x.c.map(c=>`<span>${esc(c)}</span>`).join('')}</div>
+    <div class="q"><h4>١ أي تعقيد يمشي مع هذي القيود؟</h4>${optsHTML(CX,0)}</div>
+    <div class="q"><h4>٢ تحتاج long long؟</h4>${optsHTML(['نعم','لا'],1)}</div>
+    <div class="q"><h4>٣ صنّف المسألة</h4>${optsHTML(TECH,2)}</div>`+tail}
+  else if(lab==='code'){const sel=i=>{const b=x.b[i];const o=b[0].map((v,j)=>({v,j})).sort((a,c)=>(a.v<c.v?-1:1));return `<select data-b="${i}" aria-label="فراغ ${i+1}"><option value="">؟</option>${o.map(q=>`<option value="${q.j}">${esc(q.v)}</option>`).join('')}</select>`};
+    const code=x.l.map(line=>line.split(/\{(\d)\}/).map((p,k)=>k%2?sel(+p):hlc(p)).join('')).join('\n');
+    box.innerHTML=head+(x.s?`<div class="stmt">${md(x.s)}</div>`:'')+`<p class="lead" style="margin:6px 0 10px">كمّل الفراغات بالأجزاء الرئيسية، وبعدها اضغط تحقق.</p><pre class="code">${code}</pre>
+    <div class="row"><button class="btn" id="codeB">تحقق</button></div><div id="codeFb"></div>`+tail}
+  else{box.innerHTML=head+`<div class="stmt">${md(x.s)}</div><pre class="code">${x.l.map(hlc).join('\n')}</pre>
+    <div class="q"><h4>تتبّع الكود في ذهنك: وش يطبع؟</h4><div class="ans"><input id="ansI" aria-label="الناتج" placeholder="؟"><button class="btn" id="ansB">تحقق</button></div><div class="fb" id="fbA"></div></div>`+tail}
+  $('#prevB').onclick=()=>{idx=(idx-1+DATA[lab].length)%DATA[lab].length;renderLab()};
+  $('#nextB').onclick=()=>{idx=(idx+1)%DATA[lab].length;renderLab()};
+  $('#fbkB').onclick=()=>{const f=$('#fbk');f.classList.toggle('show');$('#fbkB').textContent=f.classList.contains('show')?'إخفاء التغذية الراجعة':'التغذية الراجعة'};
+  if(lab==='req'||lab==='trace'){const go=()=>{const norm=v=>v.trim().toUpperCase().replace(/\s+/g,' ');const ok=norm($('#ansI').value)===norm(x.o);const f=$('#fbA');
+      f.className='fb show '+(ok?'ok':'no');f.innerHTML=ok?'صح! أحسنت.':(lab==='req'?'مو صح. تلميح: '+md(x.h):'مو صح. تتبّع سطر سطر، وإذا احتجت اضغط «التغذية الراجعة».');
+      if(ok){if(lab==='trace')mark(2);else{got.a=1;check()}}};
+    $('#ansB').onclick=go;$('#ansI').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}
+  if(lab==='code')$('#codeB').onclick=()=>{let all=true;const msgs=[];box.querySelectorAll('select').forEach(s=>{const i=+s.dataset.b;const ok=s.value==='0';
+      s.className=s.value===''?'':(ok?'right':'wrong');if(!ok)all=false;msgs.push(`<div class="fb show ${ok?'ok':'no'}">${i+1}) ${ok?md(x.b[i][1]):(s.value===''?'اختر قيمة لهذا الفراغ.':'راجع هذا الفراغ.')}</div>`)});
+    $('#codeFb').innerHTML=msgs.join('');if(all)mark(3)};
+}
+function check(){if(lab==='req'){if([0,1,2].every(q=>got[q])&&got.a)mark(2)}else if(lab==='cons'){if([0,1,2].every(q=>got[q]))mark(2)}}
+$('#labBox').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;const x=DATA[lab][idx];const qi=+b.dataset.q,j=+b.dataset.j;
+  let ok,exp;if(lab==='req'){ok=j===x.q[qi][2];exp=ok?'صح!':'جرّب مرة ثانية.'}
+  else{const a=x.a[qi];ok=Array.isArray(a)?a.includes(j):a===j;exp=(ok?'صح! ':'مو صح. ')+x.e[qi]}
+  b.parentElement.querySelectorAll('.opt').forEach(o=>o.classList.remove('right','wrong'));b.classList.add(ok?'right':'wrong');
+  const f=$('#fb'+qi);f.className='fb show '+(ok?'ok':'no');f.innerHTML=md(exp);if(ok){got[qi]=1;check()}});
+$('#labChips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;idx=+b.dataset.i;renderLab()});
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{lab=b.dataset.lab;idx=0;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));renderLab()}));
+
+function updProg(){const vids=['think',...LESSONS.map(l=>l[0]),...GROUPS.map(g=>g[0])];const labs=REQ.length+CONS.length+CODE.length+TRACE.length;
+  const done=vids.filter(v=>S.seen[v]).length+Object.keys(S.lab).length;const p=Math.round(100*done/(vids.length+labs));
+  $('#progT').textContent='تقدمك '+p+'%';$('#progB').style.width=p+'%'}
+renderLab();updProg();show(location.hash.slice(1));
+}
+</script>
+</body>
+</html>
